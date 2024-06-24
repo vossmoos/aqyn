@@ -1,6 +1,6 @@
 # Aqyn AI Assistant
 
-Welcome to Aqyn, your intelligent AI assistant that allows users to interact with your knowledge base as if they were speaking with a real product specialist. Aqyn is designed to understand and respond to user queries with the expertise of a trained professional who knows your product inside and out. By leveraging advanced natural language processing (NLP), Aqyn provides precise, contextually relevant answers based on your product documentation, creating a seamless and intuitive user experience.
+Welcome to Aqyn, your intelligent AI assistant that allows users to interact with your knowledge base as if they were chatting with a real product specialist. Aqyn is designed to understand and respond to user queries with the expertise of a trained professional who knows your product inside and out. By leveraging advanced natural language processing (NLP), Aqyn provides precise, contextually relevant answers based on your product documentation, creating a seamless and intuitive user experience.
 
 ## Key Features
 
