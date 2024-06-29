@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
+import firebase
 
 app = FastAPI()
 
@@ -8,6 +9,10 @@ class Document(BaseModel):
 
 class Question(BaseModel):
     text: str
+
+class Tenant(BaseModel):
+    email: str
+    passw: str
 
 @app.get("/")
 async def root():
@@ -56,7 +61,7 @@ async def get_questions(id: int, limit: int, offset: int):
 
 # Create a 
 @app.post("/tenant/")
-async def tenant():
+async def tenant(tenant: Tenant):
     """
     Register a tenant.
 
@@ -67,6 +72,9 @@ async def tenant():
     - Create a document in default collection with the tenant
 
     """
+    firebase.initialize_firebase()
+    print(tenant)
+
     return {"status":"tenant created"}
 
 @app.post("/tenant/{id}/documents")
