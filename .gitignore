@@ -1,0 +1,4 @@
+venv
+*ltd-token.json
+.env
+__pycache__/
