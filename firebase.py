@@ -4,6 +4,7 @@ import json
 from dotenv import load_dotenv
 import firebase_admin
 from firebase_admin import auth, credentials
+from firebase_admin.exceptions import FirebaseError
 
 def initialize_firebase():
     # Load environment variables from .env file
@@ -31,4 +32,13 @@ def create_user(email, password):
         email_verified=False
     )
     print(f'User created: {user.uid}')
-    return user.uid
+    return user
+
+def set_claim(uid: str):
+    custom_claims = {"tenant": uid}
+    try:
+        auth.set_custom_user_claims(uid, custom_claims)
+    except ValueError as e:
+        return e
+    except FirebaseError as e:
+        return e.args[0]

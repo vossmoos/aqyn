@@ -3,6 +3,7 @@ from pydantic import BaseModel
 import firebase
 
 app = FastAPI()
+firebase.initialize_firebase()
 
 class Document(BaseModel):
     text: str
@@ -66,17 +67,25 @@ async def tenant(tenant: Tenant):
     Register a tenant.
 
     This endpoint allows you to create a new tenant. It includes the following:
-    - Create a Firebase User
+    - Create a Firebase User *
     - Create a datastax astradb workspace.
     - Create an astradb collection.
     - Create a document in default collection with the tenant
 
     """
-    firebase.initialize_firebase()
-    print(tenant)
-
-    return {"status":"tenant created"}
-
+    try:
+        user = firebase.create_user(tenant.email, tenant.passw)
+        firebase.set_claim(user.uid)
+        return {
+            "status": "tenant created",
+            "user_id": user.uid
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": str(e)
+        }
+    
 @app.post("/tenant/{id}/documents")
 async def post_doc(id: int, document: Document):
     """
