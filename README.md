@@ -4,7 +4,7 @@ Welcome to Aqyn, your intelligent AI assistant that allows users to interact wit
 
 ## Key Features
 
-### Knowledge Base Creation
+### Your Product Knowledge Base
 Aqyn enables you to build a robust knowledge base by uploading documentation related to your products. Whether you have a single product or an extensive catalog, Aqyn can handle and index all your information efficiently. This indexed data becomes the foundation for answering user queries accurately and promptly.
 
 ### Natural Language Processing
