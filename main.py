@@ -1,9 +1,16 @@
+import fbauth
+import firebase_admin
+
 from fastapi import FastAPI
 from pydantic import BaseModel
-import firebase
+from firebase_admin import auth
+from firebase_admin.exceptions import FirebaseError
+from firebase_admin import credentials
 
 app = FastAPI()
-firebase.initialize_firebase()
+
+firebase_cred = credentials.Certificate("files/aqyn-427823-firebase-adminsdk-naz5w-8e3cdec27b.json")
+default_app = firebase_admin.initialize_app(firebase_cred)
 
 class Document(BaseModel):
     text: str
@@ -60,7 +67,7 @@ async def get_questions(id: int, limit: int, offset: int):
 
     return {"status":"questions GET"}
 
-# Create a 
+# Create a tenant
 @app.post("/tenant/")
 async def tenant(tenant: Tenant):
     """
@@ -68,17 +75,16 @@ async def tenant(tenant: Tenant):
 
     This endpoint allows you to create a new tenant. It includes the following:
     - Create a Firebase User *
-    - Create a datastax astradb workspace.
-    - Create an astradb collection.
-    - Create a document in default collection with the tenant
+    - Create a chromadb database.
+    - Create a chromadb collection.
 
     """
     try:
-        user = firebase.create_user(tenant.email, tenant.passw)
-        firebase.set_claim(user.uid)
+        user = fbauth.create_user(tenant.email, tenant.passw)
+        fbauth.set_claim(user.uid)
         return {
             "status": "tenant created",
-            "user_id": user.uid
+            "uid": user.uid
         }
     except Exception as e:
         return {

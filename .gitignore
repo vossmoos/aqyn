@@ -3,3 +3,4 @@ venv
 .env
 __pycache__/
 aqyn-427823-9ab8874add89.json
+files/*
