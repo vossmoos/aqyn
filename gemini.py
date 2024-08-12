@@ -9,4 +9,4 @@ def get_embed(content):
     embedding_model = TextEmbeddingModel.from_pretrained("text-embedding-004")
     vector = embedding_model.get_embeddings([content])
         
-    return vector[0].values
+    return vector
