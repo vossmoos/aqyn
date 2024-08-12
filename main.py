@@ -115,12 +115,12 @@ async def post_doc(document: Document, authorization: HTTPAuthorizationCredentia
     collection = chroma.get_collection(decoded_token["uid"])
 
     # embed text document
-    embeddings = gemini.get_embed(document.text[:5000])
+    emb = gemini.get_embed(document.text[:5000])
 
     # save embeddings to chroma
     document = collection.add(
             documents=[document.text[:5000]],
-            embeddings=[embeddings[0].values],
+            embeddings=[emb[0].values],
             ids=[document_id]
         )
 
