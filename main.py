@@ -140,7 +140,7 @@ async def ask_question(question: Question):
         return {
             "question": question.text,
             "answer": answer,
-            "docs": documents
+            # "docs": documents
         }
     except Exception as e:
         return {
