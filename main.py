@@ -1,5 +1,6 @@
 import fbauth
 import chroma
+import gemini
 import firebase_admin
 
 from fastapi import FastAPI, APIRouter, status, HTTPException, Header, Body, Depends
@@ -36,9 +37,7 @@ async def get_tenant(authorization: HTTPAuthorizationCredentials = Depends(secur
     Get a tenant.
 
     It returns a tenant by ID {id} with the following data:
-    - Tenant email
-    - Tenant JS Widget
-    - Tenant Slug
+    - Tenant documents
 
     """
     # get the tenant's collection
@@ -100,18 +99,25 @@ async def tenant(tenant: Tenant):
             "message": str(e)
         }
     
-@app.post("/tenant/{id}/documents")
-async def post_doc(id: int, document: Document):
+@app.post("/tenant/document")
+async def post_doc(document: Document, authorization: HTTPAuthorizationCredentials = Depends(security)):
     """
     Insert a new document.
 
     Takes a document text from POST body
 
     """
-    #print(f"Received document for tenant {id} and document ID {docid}: {document.text}")
-    #print(document)
+   # get the tenant's collection
+    decoded_token = fbauth.check_auth_token(authorization.credentials)
+    collection = chroma.get_documents(decoded_token["uid"])
 
-    return {"status":document.text}
+    # embed text document
+    embeddings = gemini.get_embed(document.text[:5000])
+
+    # save embeddings to chroma
+    document = ""
+
+    return embeddings[0].values[:20]
 
 @app.put("/tenant/{id}/documents/{docid}")
 async def update_doc(id: int, docid: int, document: Document):
