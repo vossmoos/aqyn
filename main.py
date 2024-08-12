@@ -136,9 +136,10 @@ async def ask_question(question: Question):
         emb = gemini.get_embed(question.text[:MAX_CHARS])
         documents = chroma.answer(collection, emb[0].values)
         doc_string = ", ".join(documents["documents"][0])
+        answer = gemini.get_content(doc_string, question.text[:MAX_CHARS])
         return {
             "question": question.text,
-            "answer": doc_string
+            "answer": answer
         }
     except Exception as e:
         return {
