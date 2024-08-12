@@ -23,6 +23,7 @@ class Document(BaseModel):
 
 class Question(BaseModel):
     text: str
+    tenant: str
 
 class Tenant(BaseModel):
     email: str
@@ -46,33 +47,6 @@ async def get_tenant(authorization: HTTPAuthorizationCredentials = Depends(secur
     collection = chroma.get_documents(decoded_token["uid"])
 
     return {"data": collection}
-
-@app.get("/tenant/{id}/documents/{limit}/{offset}")
-async def get_docs(id: int, limit: int, offset: int):
-    """
-    Get all documents with limit and offset.
-
-    It returns a tenant by ID {id} with the following data:
-    - Tenant name
-    - Tenant email
-    - Tenant JS Widget
-    - Tenant Slug
-
-    """
-    return {"status":"documents GET"}
-
-@app.get("/tenant/{id}/questions/{limit}/{offset}")
-async def get_questions(id: int, limit: int, offset: int):
-    """
-    Update an existent document.
-
-    Takes a document text from POST body
-
-    """
-    #print(f"Received document for tenant {id} and document ID {docid}: {document.text}")
-    #print(document)
-
-    return {"status":"questions GET"}
 
 # Create a tenant
 @app.post("/tenant/")
@@ -126,43 +100,6 @@ async def post_doc(document: Document, authorization: HTTPAuthorizationCredentia
 
     return document
 
-@app.put("/tenant/{id}/documents/{docid}")
-async def update_doc(id: int, docid: int, document: Document):
-    """
-    Update an existent document.
-
-    Takes a document text from POST body
-
-    """
-    #print(f"Received document for tenant {id} and document ID {docid}: {document.text}")
-    #print(document)
-
-    return {"status":document.text}
-
-@app.post("/tenant/{id}/question")
-async def post_question(id: int, question: Question):
-    """
-    Insert a new document.
-
-    Takes a document text from POST body
-
-    """
-    #print(f"Received document for tenant {id} and document ID {docid}: {document.text}")
-    #print(document)
-
-    return {"status":question.text}
-
-@app.post("/tenant/{id}/document/{qid}/index")
-async def index_doc(id: int, qid: int):
-    """
-    Index a document.
-
-    """
-    #print(f"Received document for tenant {id} and document ID {docid}: {document.text}")
-    #print(document)
-
-    return {"status":"indexed"}
-
 @app.delete("/tenant/document/{document_id}", status_code=204)
 async def delete_doc(document_id: str, authorization: HTTPAuthorizationCredentials = Depends(security)):
     """
@@ -178,3 +115,12 @@ async def delete_doc(document_id: str, authorization: HTTPAuthorizationCredentia
     )
 
     return {"status":"deleted"}
+
+# Post a question
+@app.post("/tenant/question", status_code=200)
+async def ask_question(question: Question):
+    """
+    Ask a question to Aqyn
+
+    """
+    return {"question": question.text, "tenant": question.tenant}
