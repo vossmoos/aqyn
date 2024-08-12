@@ -117,10 +117,20 @@ async def delete_doc(document_id: str, authorization: HTTPAuthorizationCredentia
     return {"status":"deleted"}
 
 # Post a question
-@app.post("/tenant/question", status_code=200)
+@app.post("/tenant/question")
 async def ask_question(question: Question):
     """
     Ask a question to Aqyn
 
     """
-    return {"question": question.text, "tenant": question.tenant}
+    try:
+        collection = chroma.get_collection(question.tenant)
+        return {
+            "question": question.text,
+            "tenant": question.tenant
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": str(e)
+        }
