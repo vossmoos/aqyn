@@ -41,7 +41,8 @@ async def get_tenant(authorization: HTTPAuthorizationCredentials = Depends(secur
     - Tenant Slug
 
     """
-    return {"status":"tenant GET"}
+    decoded_token = fbauth.check_auth_token(authorization.credentials)
+    return {"data":decoded_token["uid"]}
 
 @app.get("/tenant/{id}/documents/{limit}/{offset}")
 async def get_docs(id: int, limit: int, offset: int):

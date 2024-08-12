@@ -4,6 +4,7 @@ import json
 from dotenv import load_dotenv
 from firebase_admin import auth, credentials
 from firebase_admin.exceptions import FirebaseError
+from fastapi import APIRouter, status, HTTPException, Header, Body, Depends
 
 def initialize_firebase():
     # Load environment variables from .env file
@@ -40,3 +41,11 @@ def set_claim(uid: str):
         return e
     except FirebaseError as e:
         return e.args[0]
+    
+def check_auth_token(token):
+    try:
+        # Verify the Firebase ID token
+        decoded_token = auth.verify_id_token(token)
+        return decoded_token
+    except Exception:
+        raise HTTPException(status_code=401, detail="Authentication failed")
