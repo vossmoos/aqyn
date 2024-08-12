@@ -1,4 +1,5 @@
 import fbauth
+import chroma
 import firebase_admin
 
 from fastapi import FastAPI
@@ -82,6 +83,7 @@ async def tenant(tenant: Tenant):
     try:
         user = fbauth.create_user(tenant.email, tenant.passw)
         fbauth.set_claim(user.uid)
+        chroma.init_tenant(user.uid)
         return {
             "status": "tenant created",
             "uid": user.uid
