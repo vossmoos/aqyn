@@ -173,4 +173,8 @@ async def delete_doc(document_id: str, authorization: HTTPAuthorizationCredentia
     decoded_token = fbauth.check_auth_token(authorization.credentials)
     collection = chroma.get_collection(decoded_token["uid"])
 
+    collection.delete(
+        ids=[document_id]
+    )
+
     return {"status":"deleted"}
