@@ -1,6 +1,7 @@
 import fbauth
 import chroma
 import gemini
+import uuid
 import firebase_admin
 
 from fastapi import FastAPI, APIRouter, status, HTTPException, Header, Body, Depends
@@ -107,6 +108,8 @@ async def post_doc(document: Document, authorization: HTTPAuthorizationCredentia
     Takes a document text from POST body
 
     """
+    # document ID
+    document_id = str(uuid.uuid4())
    # get the tenant's collection
     decoded_token = fbauth.check_auth_token(authorization.credentials)
     collection = chroma.get_documents(decoded_token["uid"])
@@ -115,9 +118,13 @@ async def post_doc(document: Document, authorization: HTTPAuthorizationCredentia
     embeddings = gemini.get_embed(document.text[:5000])
 
     # save embeddings to chroma
-    document = ""
+    document = collection.add(
+            documents=[document.text[:5000]],
+            embeddings=[embeddings[0].values],
+            ids=[document_id]
+        )
 
-    return embeddings[0].values[:20]
+    return document
 
 @app.put("/tenant/{id}/documents/{docid}")
 async def update_doc(id: int, docid: int, document: Document):
