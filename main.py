@@ -2,13 +2,16 @@ import fbauth
 import chroma
 import firebase_admin
 
-from fastapi import FastAPI
+from fastapi import FastAPI, APIRouter, status, HTTPException, Header, Body, Depends
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
 from firebase_admin import auth
 from firebase_admin.exceptions import FirebaseError
 from firebase_admin import credentials
+from typing import Optional
 
 app = FastAPI()
+security = HTTPBearer()
 
 firebase_cred = credentials.Certificate("files/aqyn-427823-firebase-adminsdk-naz5w-8e3cdec27b.json")
 default_app = firebase_admin.initialize_app(firebase_cred)
@@ -27,13 +30,12 @@ class Tenant(BaseModel):
 async def root():
     return {"status":"ok"}
 
-@app.get("/tenant/{id}")
-async def get_tenant(id: int):
+@app.get("/tenant")
+async def get_tenant(authorization: HTTPAuthorizationCredentials = Depends(security)):
     """
     Get a tenant.
 
     It returns a tenant by ID {id} with the following data:
-    - Tenant name
     - Tenant email
     - Tenant JS Widget
     - Tenant Slug
