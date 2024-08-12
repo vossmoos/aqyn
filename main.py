@@ -162,3 +162,15 @@ async def index_doc(id: int, qid: int):
     #print(document)
 
     return {"status":"indexed"}
+
+@app.delete("/tenant/document/{document_id}", status_code=204)
+async def delete_doc(document_id: str, authorization: HTTPAuthorizationCredentials = Depends(security)):
+    """
+    Index a document.
+
+    """
+    #get the tenant's collection
+    decoded_token = fbauth.check_auth_token(authorization.credentials)
+    collection = chroma.get_collection(decoded_token["uid"])
+
+    return {"status":"deleted"}
