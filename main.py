@@ -112,7 +112,7 @@ async def post_doc(document: Document, authorization: HTTPAuthorizationCredentia
     document_id = str(uuid.uuid4())
    # get the tenant's collection
     decoded_token = fbauth.check_auth_token(authorization.credentials)
-    collection = chroma.get_documents(decoded_token["uid"])
+    collection = chroma.get_collection(decoded_token["uid"])
 
     # embed text document
     embeddings = gemini.get_embed(document.text[:5000])
