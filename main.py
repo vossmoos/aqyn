@@ -139,7 +139,8 @@ async def ask_question(question: Question):
         answer = gemini.get_content(doc_string, question.text[:MAX_CHARS])
         return {
             "question": question.text,
-            "answer": answer
+            "answer": answer,
+            "docs": documents["documents"][0]
         }
     except Exception as e:
         return {
