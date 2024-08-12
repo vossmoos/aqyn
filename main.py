@@ -134,7 +134,7 @@ async def ask_question(question: Question):
     try:
         collection = chroma.get_collection(question.tenant)
         emb = gemini.get_embed(question.text[:MAX_CHARS])
-        documents = chroma.answer(collection, emb)
+        documents = chroma.answer(collection, emb[0].values)
         return {
             "question": question.text,
             "answer": documents
