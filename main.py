@@ -41,8 +41,11 @@ async def get_tenant(authorization: HTTPAuthorizationCredentials = Depends(secur
     - Tenant Slug
 
     """
+    # get the tenant's collection
     decoded_token = fbauth.check_auth_token(authorization.credentials)
-    return {"data":decoded_token["uid"]}
+    collection = chroma.get_documents(decoded_token["uid"])
+
+    return {"data": collection}
 
 @app.get("/tenant/{id}/documents/{limit}/{offset}")
 async def get_docs(id: int, limit: int, offset: int):
