@@ -30,3 +30,11 @@ def get_tenant_chroma_client(tenant_id):
     chroma_client = chromadb.PersistentClient(path=customer_path)
     
     return chroma_client
+
+def answer(collection, emb):
+    documents = collection.query(
+        query_embeddings=[emb],
+        n_results=2
+    )
+
+    return documents

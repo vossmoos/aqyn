@@ -14,6 +14,8 @@ from typing import Optional
 
 app = FastAPI()
 security = HTTPBearer()
+MAX_DOCUMENTS=30
+MAX_CHARS=5000
 
 firebase_cred = credentials.Certificate("files/aqyn-427823-firebase-adminsdk-naz5w-8e3cdec27b.json")
 default_app = firebase_admin.initialize_app(firebase_cred)
@@ -88,8 +90,14 @@ async def post_doc(document: Document, authorization: HTTPAuthorizationCredentia
     decoded_token = fbauth.check_auth_token(authorization.credentials)
     collection = chroma.get_collection(decoded_token["uid"])
 
+    if (collection.count() > MAX_DOCUMENTS):
+        raise HTTPException(
+            status_code=403, 
+            detail="Creation of an additional content element is not possible with the current plan"
+        )
+
     # embed text document
-    emb = gemini.get_embed(document.text[:5000])
+    emb = gemini.get_embed(document.text[:MAX_CHARS])
 
     # save embeddings to chroma
     document = collection.add(
@@ -125,9 +133,11 @@ async def ask_question(question: Question):
     """
     try:
         collection = chroma.get_collection(question.tenant)
+        emb = gemini.get_embed(question.text[:MAX_CHARS])
+        documents = chroma.answer(collection, emb)
         return {
             "question": question.text,
-            "tenant": question.tenant
+            "answer": documents
         }
     except Exception as e:
         return {

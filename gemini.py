@@ -10,3 +10,7 @@ def get_embed(content):
     vector = embedding_model.get_embeddings([content])
         
     return vector
+
+def get_content(documents):
+
+    return ""
