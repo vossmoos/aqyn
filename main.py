@@ -11,8 +11,16 @@ from firebase_admin import auth
 from firebase_admin.exceptions import FirebaseError
 from firebase_admin import credentials
 from typing import Optional
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 security = HTTPBearer()
 MAX_DOCUMENTS=30
 MAX_CHARS=5000
